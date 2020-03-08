@@ -47,7 +47,7 @@ object PitchClass {
 }
 
 case class Intervals(is: Vector[IntMod12]) {
-  require(is.map(_.v).sum == 12)
+  require(is.map(_.v).sum == 12, s"intervals sum: ${is.map(_.v).sum}, expected: 12")
 
   def apply(index: Int): IntMod12 = is.apply(index)
 

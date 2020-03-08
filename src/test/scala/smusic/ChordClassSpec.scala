@@ -21,6 +21,11 @@ class ChordClassSpec extends AnyFlatSpec with TypeCheckedTripleEquals with Match
     ChordClass.Tetrad7.seventhMajor should === (Some(false))
   }
 
+  "ChordClass.TetradMin7b5" should "have a minor 3rd and a minor 7th" in {
+    ChordClass.TetradMin7b5.thirdMajor should === (Some(false))
+    ChordClass.TetradMin7b5.seventhMajor should === (Some(false))
+  }
+
   "ChordClass.TriadMajor" should "have a major 3rd and no 7th" in {
     ChordClass.TriadMajor.thirdMajor should === (Some(true))
     ChordClass.TriadMajor.seventhMajor should === (None)
