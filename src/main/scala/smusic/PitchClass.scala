@@ -1,20 +1,13 @@
 package smusic
 
-case class IntMod12(v: Int) {
-  require(v < 12 && v >= 0)
+import scala.language.implicitConversions
 
-  def +(shift: Int): IntMod12 = IntMod12((v + shift) % 12)
 
-  def name: Char =
-    if (v < 10) ('0' + v).toChar
-    else if (v == 10) 'a'
-    else if (v == 11) 'b'
-    else sys.error("invalid value: " + v)
-}
+
 
 // Rename / Alias to Note ? Maybe Note is too ambiguous: is it a pitch or a pitch class?
 abstract class PitchClass(val i: IntMod12, val name: String, val altName: Option[String] = None) {
-  def +(shift: Int): PitchClass = PitchClass.all((i + shift).v)
+  def +(shift: IntMod12): PitchClass = PitchClass.all((i + shift).v)
 
   override def toString: String = "pc" + i.name.toString
 
@@ -53,22 +46,62 @@ object PitchClass {
   )
 }
 
+case class Intervals(is: Vector[IntMod12]) {
+  require(is.map(_.v).sum == 12)
+
+  def apply(index: Int): IntMod12 = is.apply(index)
+
+  def rotate(start: Int): Intervals =
+    Intervals(is.drop(start) ++ is.dropRight(is.size - start))
+
+
+  def pitchClasses(tonic: PitchClass): Vector[PitchClass] =
+    is.foldLeft(Vector(tonic)) { case (pcs, interval) =>
+      pcs :+ (pcs.last + interval)
+    }
+
+  // TODO name for this concept? looks similar to pitchClass without reference to a pitch
+  lazy val shifts: Vector[IntMod12] = is.foldLeft(Vector(is.head)){ case (acc, interval) =>
+    acc :+ (is.last + interval)
+  }
+
+  def heptatonic: Boolean = is.size == 7
+}
+object Intervals {
+  def apply(is: IntMod12*): Intervals = Intervals(is.toVector)
+}
+
+// TODO model a Scale as case class Scale(Degree, Intervals) ?
 /* Heptatonic scale that includes 5 whole tones and 2 semitones */
 case class DiatonicScale(degree: Degree) {
-  def intervals: Vector[Int] = {
-    val result = (DiatonicScale.MajorIntervals.drop(degree.v) ++ DiatonicScale.MajorIntervals.dropRight(7 - degree.v))
-    assert(result.size == 7)
+  lazy val intervals: Intervals = {
+    val result = DiatonicScale.MajorIntervals.rotate(degree.v.v)
+    assert(result.heptatonic)
     result
   }
 
-  def pitchClasses(tonic: PitchClass): Vector[PitchClass] =
-    intervals.foldLeft(Vector(tonic)) { case (pcs, interval) =>
-      pcs :+ (pcs.last + interval)
-    }
+  def trichord: ChordClass = triad
+  lazy val triad: ChordClass = {
+    ChordClass(Intervals(
+      intervals(0) + intervals(1),
+      intervals(2) + intervals(3),
+      intervals(4) + intervals(5) + intervals(6)
+    ))
+  }
+
+  def tetrachord: ChordClass = tetrad
+  lazy val tetrad: ChordClass = {
+    ChordClass(Intervals(
+      intervals(0) + intervals(1),
+      intervals(2) + intervals(3),
+      intervals(4) + intervals(5),
+      intervals(6)
+    ))
+  }
 }
 
 object DiatonicScale {
-  val MajorIntervals = Vector(2, 2, 1, 2, 2, 2, 1)
+  val MajorIntervals: Intervals = Intervals(2, 2, 1, 2, 2, 2, 1)
 
   val Ionian = DiatonicScale(Degree(0))
   val Dorian = DiatonicScale(Degree(1))
@@ -84,5 +117,5 @@ object DiatonicScale {
 }
 
 // TODO express in roman numerals
-case class Degree(v: Int)
+case class Degree(v: IntMod8)
 
