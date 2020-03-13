@@ -3,7 +3,6 @@ package smusic
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import smusic.PitchClass.{PitchClass0, PitchClassb}
 
 class ChordClassSpec extends AnyFlatSpec with TypeCheckedTripleEquals with Matchers {
   "ChordClass.TetradMajor7" should "have a major 3rd and a major 7th" in {
