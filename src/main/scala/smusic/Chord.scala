@@ -20,6 +20,27 @@ case class ChordClass(intervals: Intervals) {
     }
   }
 
+  def perfectFifth: Option[Boolean] = {
+    def _perfectFifth(i: IntMod12): Option[Boolean] = i.v match {
+      case i if i == 7  => Some(true)
+      case i if i == 6 => Some(false)
+      case _ => None
+    }
+    // TODO algo could be used to find all components in one pass
+    val (result, _) = intervals.is.foldLeft((Option.empty[Boolean], IntMod12(0))){ case ((fifth, accInterval), interval) =>
+      if (fifth.isDefined)
+        (fifth, accInterval + interval)
+      else {
+        accInterval match {
+          case i if i.v < 6 => (None, accInterval + interval)
+          case i if i.v > 7 => (None, accInterval + interval)
+          case i => (_perfectFifth(i), accInterval + interval)
+        }
+      }
+    }
+    result
+  }
+
   /* @return true if the third is a major 7th, false if it is a minor 7th, None if there is no 7th */
   def seventhMajor: Option[Boolean] = {
     require(intervals.is.nonEmpty)
@@ -30,6 +51,24 @@ case class ChordClass(intervals: Intervals) {
     }
 
     _seventhMajor(IntMod12(0) - intervals.is.last.v)
+  }
+
+  override def toString: String = {
+    val thirdSeventh = (thirdMajor, seventhMajor) match {
+      case (Some(true), Some(true)) => "M7"
+      case (Some(true), Some(false)) => "7"
+      case (Some(true), None) => "M"
+      case (Some(false), Some(false)) => "m7"
+      case (Some(false), Some(true)) => ???
+      case (Some(false), None) => "m"
+      case (None, None) => ""
+    }
+    val fifth = perfectFifth match {
+      case Some(true) => ""
+      case Some(false) => "b5"
+      case None => ???
+    }
+    thirdSeventh + fifth
   }
 }
 

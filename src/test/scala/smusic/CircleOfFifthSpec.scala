@@ -24,8 +24,8 @@ class CircleOfFifthSpec extends org.scalatest.FlatSpec with TypeCheckedTripleEqu
     CircleOfFifth.keySignature(PitchClass.PitchClassCs).toString should === ("5b")
 
     Seq.tabulate(12)(i => CircleOfFifth.keySignature(CircleOfFifth(i))) should === (
-      Seq.tabulate(7)(i => KeySignature(IntMod8(i), sharp = true)) ++
-        (5 to 1 by -1).map(i => KeySignature(IntMod8(i), sharp = false))
+      Seq.tabulate(7)(i => KeySignature(IntMod7(i), sharp = true)) ++
+        (5 to 1 by -1).map(i => KeySignature(IntMod7(i), sharp = false))
     )
   }
 }

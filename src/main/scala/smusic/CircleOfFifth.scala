@@ -22,14 +22,21 @@ object CircleOfFifth {
   def keySignature(pc: PitchClass): KeySignature = {
     val i = CircleOfFifth.indexOf(pc)
     if (i.v > 6)
-      KeySignature(IntMod8(12 - i.v), sharp = false)
+      KeySignature(IntMod7(12 - i.v), sharp = false)
     else
-      KeySignature(IntMod8(i.v), sharp = true)
+      KeySignature(IntMod7(i.v), sharp = true)
 
   }
 
+  // TODO: circle of fourths explains how one tonal field (scale, key, chord) wants to move to become another tonal field
+  // it wants to move that way because the scales are so close.
+  // The 3rd od one scale, moves one semi tone to become the 7th of the next scale.
+  // these 2 notes are important because they determine whetherthe scale is major, minor, dominant or dimished.
+
+
+
 }
 
-case class KeySignature(count: IntMod8, sharp: Boolean) {
+case class KeySignature(count: IntMod7, sharp: Boolean) {
   override def toString: String = s"${count.v}${if (sharp) "#" else "b"}"
 }

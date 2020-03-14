@@ -20,13 +20,13 @@ object IntMod12 {
 }
 
 
-case class IntMod8(v: Int) {
+case class IntMod7(v: Int) {
   require(v < 8 && v >= 0)
 
-  def +(shift: IntMod8): IntMod8 = IntMod8((v + shift.v) % 8)
+  def +(shift: IntMod7): IntMod7 = IntMod7((v + shift.v) % 7)
 }
 
-object IntMod8 {
-  implicit def intToIntMod8(i: Int): IntMod8 = IntMod8(i % 8)
+object IntMod7 {
+  implicit def intToIntMod7(i: Int): IntMod7 = IntMod7(i % 7)
 
 }

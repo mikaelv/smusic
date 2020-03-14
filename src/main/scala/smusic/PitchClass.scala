@@ -75,5 +75,5 @@ object PitchClass {
 
 
 // TODO express in roman numerals
-case class Degree(v: IntMod8)
+case class Degree(v: IntMod7)
 

@@ -43,7 +43,11 @@ class DiatonicScaleSpec extends AnyFlatSpec with TypeCheckedTripleEquals with Ma
     DiatonicScale.Mixolydian.tetrad should === (ChordClass.Tetrad7)
   }
 
+  "tetrads of degrees from I to VII" should "be M7 m7 m7 M7 7 m7 m7b5" in {
+    val tetrads = (0 to 6).map(i => DiatonicScale(Degree(i)).tetrad).mkString(" ")
+    tetrads should === ("M7 m7 m7 M7 7 m7 m7b5")
+  }
 
-  // TODO what's the deal with the circle of 5th and sharps? unit test this
-
+  // TODO https://en.wikipedia.org/wiki/Diatonic_scale#Diatonic_scales_and_tetrachords
+  //  A diatonic scale can be also described as two tetrachords separated by a whole tone.
 }
